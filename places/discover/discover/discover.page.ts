@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {PlacesService} from '../../places/services/places.service';
 import {Place} from '../../places/models/place.model';
-import { Pipe } from '@angular/core';
 import {MenuController} from '@ionic/angular';
 
 @Component({
@@ -22,6 +21,10 @@ export class DiscoverPage implements OnInit {
 
   openMenu() {
     this.menuController.toggle();
+  }
+
+  segmentChanged(event: CustomEvent) {
+    console.log(event);
   }
 
 }
