@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'app-new-offer',
@@ -7,9 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NewOfferPage implements OnInit {
 
+  newOfferForm: FormGroup;
+
   constructor() { }
 
   ngOnInit() {
+
+  }
+
+  createOffer() {
+
   }
 
 }
