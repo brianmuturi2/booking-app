@@ -4,6 +4,11 @@
       <ion-back-button defaultHref="/places/offers"></ion-back-button>
     </ion-buttons>
     <ion-title>Edit offer</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="saveOffer()" [disabled]="form.invalid">
+        <ion-icon name="checkmark" slot="icon-only" color="primary"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 

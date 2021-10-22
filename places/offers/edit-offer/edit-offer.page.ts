@@ -43,4 +43,8 @@ export class EditOfferPage implements OnInit {
     });
   }
 
+  saveOffer() {
+    console.log('saved');
+  }
+
 }
