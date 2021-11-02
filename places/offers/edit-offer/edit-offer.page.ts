@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PlacesService} from '../../places/services/places.service';
 import {Place} from '../../places/models/place.model';
-import {NavController} from '@ionic/angular';
+import {LoadingController, NavController} from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -23,7 +23,8 @@ export class EditOfferPage implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute,
               private router: Router,
               private placesService: PlacesService,
-              private navController: NavController) { }
+              private navController: NavController,
+              private loadingController: LoadingController) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(res => {
@@ -31,7 +32,8 @@ export class EditOfferPage implements OnInit, OnDestroy {
         this.navController.navigateBack('/places/offers');
         return;
       }
-      this.placeSub = this.placesService.getPlace(res.get('placeId')).subscribe(placeRes => {
+      this.placeId = res.get('placeId');
+      this.placeSub = this.placesService.getPlace(this.placeId).subscribe(placeRes => {
         this.place = placeRes;
 
         this.form = new FormGroup({
@@ -49,6 +51,18 @@ export class EditOfferPage implements OnInit, OnDestroy {
   }
 
   saveOffer() {
+    this.loadingController.create({
+      message: 'Updating place...'
+    }).then(loadingEl => {
+      loadingEl.present();
+
+      this.placesService.updatePlace(this.placeId, this.form.value.title, this.form.value.description).subscribe(res => {
+         loadingEl.dismiss();
+         this.form.reset();
+         this.router.navigate(['/places/offers']);
+      });
+    });
+
     console.log('saved');
   }
 
