@@ -23,7 +23,7 @@ export class OfferBookingsPage implements OnInit {
         this.navController.navigateBack('/places/offers');
         return;
       }
-      this.place = this.placesService.getPlace(res.get('placeId'));
+      this.placesService.getPlace(res.get('placeId')).subscribe(res => this.place = res );
     });
   }
 

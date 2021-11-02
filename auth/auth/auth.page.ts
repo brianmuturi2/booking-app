@@ -23,24 +23,24 @@ export class AuthPage implements OnInit {
   login() {
     this.authService.logIn();
 
-    this.loadingController.create({
-      duration: 5500,
-      keyboardClose: true,
-      message: 'Login you in...',
-    }).then(res => {
-      res.present();
-      res.dismiss();
-      setTimeout(()=>{
-        this.router.navigate(['/places/discover']);
-      }, 5500);
-    });
+    const presentLoading = async () => {
+      const loading = await this.loadingController.create({
+        duration: 5500,
+        keyboardClose: true,
+        message: 'Login you in...',
+      });
+      await loading.present();
+      await loading.onDidDismiss();
+      this.router.navigate(['/places/discover']);
+    };
+    presentLoading();
   }
 
   logout() {
     this.authService.logOut();
   }
 
-  toggleisLogin() {
+  toggleIsLogin() {
     this.isLogin = !this.isLogin;
   }
 

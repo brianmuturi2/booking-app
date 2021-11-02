@@ -15,6 +15,7 @@ import {CreateBookingComponent} from '../../../bookings/modals/create-booking/cr
     FormsModule,
     IonicModule,
     PlaceDetailPageRoutingModule,
+    FormsModule
   ],
   declarations: [
     PlaceDetailPage,

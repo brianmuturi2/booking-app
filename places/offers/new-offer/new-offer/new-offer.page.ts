@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
+import {PlacesService} from "../../../places/services/places.service";
 
 @Component({
   selector: 'app-new-offer',
@@ -12,7 +15,9 @@ export class NewOfferPage implements OnInit {
 
   newOfferForm: FormGroup;
 
-  constructor() { }
+  constructor(private placesService: PlacesService,
+              private toastController: ToastController,
+              private router: Router) { }
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -40,7 +45,18 @@ export class NewOfferPage implements OnInit {
   }
 
   createOffer() {
-    console.log(this.form);
+    this.placesService.addPlace(this.form.value.title, this.form.value.description, this.form.value.price, new Date(this.form.value.dateFrom), new Date(this.form.value.dateTo));
+
+    const presentToast = async () => {
+      const toast = await this.toastController.create({
+        message: 'Place added successfully.',
+        duration: 1000
+      });
+      toast.present();
+      this.form.reset();
+      this.router.navigate(['/places/discover']);
+    };
+    presentToast();
   }
 
 }
