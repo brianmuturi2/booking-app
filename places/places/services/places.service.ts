@@ -28,7 +28,7 @@ export class PlacesService {
             '199.99',
             new Date('2019-01-01'),
             new Date('2019-12-31'),
-            'abc'
+            'arbc'
         ),
         new Place(
             'p3',
@@ -38,7 +38,7 @@ export class PlacesService {
             '399.99',
             new Date('2019-01-01'),
             new Date('2019-12-31'),
-            'abc'
+            'abdc'
         )
       ]
   );
