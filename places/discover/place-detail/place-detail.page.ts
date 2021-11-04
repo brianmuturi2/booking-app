@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {ActionSheetController, ModalController, NavController} from '@ionic/angular';
+import {ActionSheetController, LoadingController, ModalController, NavController} from '@ionic/angular';
 import {PlacesService} from '../../places/services/places.service';
 import {Place} from '../../places/models/place.model';
 import {CreateBookingComponent} from '../../../bookings/modals/create-booking/create-booking.component';
 import { Subscription } from 'rxjs';
+import {BookingService} from "../../../bookings/services/booking.service";
 
 @Component({
   selector: 'app-place-detail',
@@ -21,7 +22,9 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
                 private route: ActivatedRoute,
                 private placesService: PlacesService,
                 private modalController: ModalController,
-                private actionSheetController: ActionSheetController) { }
+                private actionSheetController: ActionSheetController,
+                private loadingController: LoadingController,
+                private bookingService: BookingService) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(res => {
@@ -60,22 +63,30 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     });
   }
 
-  openBookingModal(mode: 'select' | 'random') {
+  async openBookingModal(mode: 'select' | 'random') {
     console.log(mode);
 
-    this.modalController.create({
+    const modal = await this.modalController.create({
       component: CreateBookingComponent,
       componentProps: {
         selectedPlace: this.place,
         selectedMode: mode
       },
       id: 'book-place'
-    }).then(res => {
-      res.present();
-      return res.onDidDismiss();
-    }).then(res => {
-      console.log(res);
     });
+    await modal.present();
+    const dismiss = await modal.onDidDismiss();
+    console.log('dismiss value is ', dismiss);
+    if (dismiss.role === 'confirm') {
+      const loadCtrl = await this.loadingController.create({
+        message: 'Booking place...'
+      });
+      await loadCtrl.present();
+      const data = this.bookingService.addBooking(this.place.id, this.place.title, this.place.imageUrl, dismiss.data.bookingData.firstName, dismiss.data.bookingData.lastName, dismiss.data.bookingData.guestNumber, dismiss.data.bookingData.startDate, dismiss.data.bookingData.endDate).subscribe(response => {
+        this.loadingController.dismiss();
+      });
+      this.router.navigate(['/bookings']);
+    }
   }
 
   ngOnDestroy() {

@@ -1,6 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Place} from '../../../places/places/models/place.model';
 import {ModalController} from '@ionic/angular';
+import {FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-create-booking',
@@ -14,6 +15,8 @@ export class CreateBookingComponent implements OnInit {
 
   startDate: string;
   endDate: string;
+
+  @ViewChild('f', {static: false}) form: FormGroup;
 
   constructor(private modalController: ModalController) { }
 
@@ -33,8 +36,26 @@ export class CreateBookingComponent implements OnInit {
   cancel() {
     this.modalController.dismiss(
       {
-        message: 'Closed book place'
+        message: 'Closed book place',
       }, 'cancel', this.id);
   }
+  save() {
+    if (this.form.invalid || !this.datesValid()) {
+      return;
+    }
+    this.modalController.dismiss(
+      {
+        bookingData: {
+          firstName: this.form.value.firstName,
+          lastName: this.form.value.lastName,
+          guestNumber: +this.form.value.guestNumber,
+          startDate: new Date(this.form.value.dateFrom),
+          endDate: new Date(this.form.value.dateTo)
+        }
+      }, 'confirm');
+  }
 
+  datesValid() {
+    return this.form.value.dateTo > this.form.value.dateFrom;
+  }
 }
