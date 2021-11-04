@@ -82,8 +82,8 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         message: 'Booking place...'
       });
       await loadCtrl.present();
-      const data = this.bookingService.addBooking(this.place.id, this.place.title, this.place.imageUrl, dismiss.data.bookingData.firstName, dismiss.data.bookingData.lastName, dismiss.data.bookingData.guestNumber, dismiss.data.bookingData.startDate, dismiss.data.bookingData.endDate).subscribe(response => {
-        this.loadingController.dismiss();
+      const data = await this.bookingService.addBooking(this.place.id, this.place.title, this.place.imageUrl, dismiss.data.bookingData.firstName, dismiss.data.bookingData.lastName, dismiss.data.bookingData.guestNumber, dismiss.data.bookingData.startDate, dismiss.data.bookingData.endDate).subscribe(response => {
+        loadCtrl.dismiss();
       });
       this.router.navigate(['/bookings']);
     }
