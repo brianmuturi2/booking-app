@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import {Place} from '../models/place.model';
 import {AuthService} from "../../../auth/services/auth.service";
 import { BehaviorSubject } from 'rxjs';
-import { take, map, tap, delay } from 'rxjs/operators';
+import { take, map, tap, delay, switchMap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { urls } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +45,8 @@ export class PlacesService {
       ]
   );
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService,
+              private http: HttpClient) { }
 
   get places() {
       return this._places.asObservable();
@@ -60,10 +63,21 @@ export class PlacesService {
 
   addPlace(title: string, description: string, price: string, availableFrom: Date, availableTo: Date) {
     const newPlace = new Place(Math.random().toString(), title, description, 'https://static.tripzilla.com/thumb/9/0/165008_800x.jpg', price, availableFrom, availableTo, this.authService.userId);
-    this.places.pipe(take(1)).subscribe(res => {
-        this._places.next(res.concat(newPlace));
-    });
+    let response_id = '';
+    this.http.post<{name: string}>(urls.firebase, {...newPlace, id: null}).pipe(
+        switchMap(resData => {
+            response_id = resData.name;
+            return this.places;
+        }), take(1), tap(places => {
+            newPlace.id = response_id;
+            this._places.next(places.concat(newPlace));
+        })
+    );
+/*      return this.places.pipe(take(1)).subscribe(res => {
+          this._places.next(res.concat(newPlace));
+      });*/
   }
+
 
   updatePlace(placeId: string, title: string, description: string) {
     return this.places.pipe(take(1), delay(1000), tap(places => {

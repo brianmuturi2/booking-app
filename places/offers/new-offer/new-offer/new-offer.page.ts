@@ -45,6 +45,7 @@ export class NewOfferPage implements OnInit {
   }
 
   createOffer() {
+    console.log('form is ',this.form.value);
     this.placesService.addPlace(this.form.value.title, this.form.value.description, this.form.value.price, new Date(this.form.value.dateFrom), new Date(this.form.value.dateTo));
 
     const presentToast = async () => {
@@ -54,7 +55,7 @@ export class NewOfferPage implements OnInit {
       });
       toast.present();
       this.form.reset();
-      this.router.navigate(['/places/discover']);
+      this.router.navigate(['/places/offers']);
     };
     presentToast();
   }

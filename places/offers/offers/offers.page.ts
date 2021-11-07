@@ -35,4 +35,11 @@ export class OffersPage implements OnInit, OnDestroy {
     this.offersSub.unsubscribe();
   }
 
+  ionViewDidEnter() {
+    this.offersSub = this.placesService.places.subscribe(res => {
+      this.offers = res;
+      console.log('offers are ', this.offers);
+    });
+  }
+
 }
