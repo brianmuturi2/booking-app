@@ -18,14 +18,29 @@ export class MapModalComponent implements OnInit, AfterViewInit {
   ngOnInit() {}
 
   ngAfterViewInit() {
+    // consume map sdk once it has been resolved
     this.getMaps().then(googleMaps => {
+      // create google maps view from resolved sdk
       const mapEl = this.mapElementRef.nativeElement;
       const map = new googleMaps.Map(mapEl, {
-        center: {lat: 1.2921, lng: 36.8219},
+        center: {lat: -1.2856, lng: 36.8259},
         zoom: 16
       });
+
+      // add visible css class to make the map visible once loaded
       googleMaps.event.addListenerOnce(map, 'idle', () => {
         this.renderer.addClass(mapEl, 'visible');
+      });
+
+      // add click listener to get location clicked
+      map.addListener('click', event => {
+        const selectedCoords = {
+          lat: event.latLng.lat(),
+          lng: event.latLng.lng()
+        };
+
+        // dismiss the map modal with selected coordinates
+        this.modalCtrl.dismiss(selectedCoords);
       });
     }).catch(err => {
       const presentToast = async () => {
