@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
 import {keys, urls} from 'src/environments/environment';
 
@@ -8,7 +8,10 @@ import {keys, urls} from 'src/environments/environment';
   templateUrl: './map-modal.component.html',
   styleUrls: ['./map-modal.component.scss'],
 })
-export class MapModalComponent implements OnInit, AfterViewInit {
+export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  clickListener: any;
+  googleMaps: any;
 
   @ViewChild('map', {static: false}) mapElementRef: ElementRef;
   constructor(private modalCtrl: ModalController,
@@ -20,6 +23,7 @@ export class MapModalComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     // consume map sdk once it has been resolved
     this.getMaps().then(googleMaps => {
+      this.googleMaps = googleMaps;
       // create google maps view from resolved sdk
       const mapEl = this.mapElementRef.nativeElement;
       const map = new googleMaps.Map(mapEl, {
@@ -28,12 +32,12 @@ export class MapModalComponent implements OnInit, AfterViewInit {
       });
 
       // add visible css class to make the map visible once loaded
-      googleMaps.event.addListenerOnce(map, 'idle', () => {
+      this.googleMaps.event.addListenerOnce(map, 'idle', () => {
         this.renderer.addClass(mapEl, 'visible');
       });
 
       // add click listener to get location clicked
-      map.addListener('click', event => {
+      this.clickListener = map.addListener('click', event => {
         const selectedCoords = {
           lat: event.latLng.lat(),
           lng: event.latLng.lng()
@@ -56,6 +60,10 @@ export class MapModalComponent implements OnInit, AfterViewInit {
 
   cancel() {
     this.modalCtrl.dismiss();
+  }
+
+  ngOnDestroy() {
+    this.googleMaps.event.removeListener(this.clickListener);
   }
 
   private getMaps(): Promise<any> {

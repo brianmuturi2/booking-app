@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import {keys, urls} from '../../../../../environments/environment';
 
 @Injectable({
@@ -16,5 +16,9 @@ export class LocationPickerService {
         return null;
       } return geoData['results'][0].formatted_address;
     }));
+  }
+
+  getMapImage(lat: number, lng: number, zoom: number) {
+    return this.httpClient.get(`${urls.staticMap}${lat},${lng}&zoom=${zoom}&size=500x300&maptype=roadmap&markers=color:red%7Clabel:Place%7C${lat},${lng}&key=${keys.maps}`);
   }
 }
