@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
-import { keys } from 'src/environments/environment';
+import {keys, urls} from 'src/environments/environment';
 
 
 @Component({
@@ -69,7 +69,7 @@ export class MapModalComponent implements OnInit, AfterViewInit {
       return Promise.resolve(googleModule.maps);
     } return new Promise((resolve, reject) => {
        const script = document.createElement('script');
-       script.src = 'https://maps.googleapis.com/maps/api/js?key=' + keys.maps;
+       script.src = `${urls.maps}${keys.maps}`;
        script.async = true;
        script.defer = true;
        document.body.appendChild(script);
