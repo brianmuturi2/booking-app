@@ -62,16 +62,17 @@ export class PlacesService {
   }
 
   addPlace(title: string, description: string, price: string, availableFrom: Date, availableTo: Date) {
+    let genId = '';
     const newPlace = new Place(Math.random().toString(), title, description, 'https://static.tripzilla.com/thumb/9/0/165008_800x.jpg', price, availableFrom, availableTo, this.authService.userId);
     let response_id = '';
-    this.http.post<{name: string}>(urls.firebase, {...newPlace, id: null}).pipe(
-        switchMap(resData => {
-            response_id = resData.name;
-            return this.places;
-        }), take(1), tap(places => {
-            newPlace.id = response_id;
+    return this.http.post<{name: string}>(urls.firebase, {...newPlace, id: null}).pipe(
+         switchMap(resData => {
+           genId = resData.name;
+           return this.places;
+         }), take(1), tap(places => {
+            newPlace.id = genId;
             this._places.next(places.concat(newPlace));
-        })
+      })
     );
 /*      return this.places.pipe(take(1)).subscribe(res => {
           this._places.next(res.concat(newPlace));

@@ -46,7 +46,9 @@ export class NewOfferPage implements OnInit {
 
   createOffer() {
     console.log('form is ',this.form.value);
-    this.placesService.addPlace(this.form.value.title, this.form.value.description, this.form.value.price, new Date(this.form.value.dateFrom), new Date(this.form.value.dateTo));
+    this.placesService.addPlace(this.form.value.title, this.form.value.description, this.form.value.price, new Date(this.form.value.dateFrom), new Date(this.form.value.dateTo)).subscribe(res => {
+      console.log('res is ', res);
+    });
 
     const presentToast = async () => {
       const toast = await this.toastController.create({
