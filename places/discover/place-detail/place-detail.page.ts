@@ -16,6 +16,9 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
 
   place: Place;
   placeSub: Subscription;
+  placeId: string;
+
+  isLoading = false;
 
   constructor(  private router: Router,
                 private navController: NavController,
@@ -28,8 +31,15 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.paramMap.subscribe(res => {
-      this.placeSub = this.placesService.getPlace(res.get('placeId')).subscribe(placeRes => this.place = placeRes );
+      this.placeId = res.get('placeId');
+      // this.placeSub = this.placesService.getPlace(this.placeId).subscribe(placeRes => this.place = placeRes );
     });
+    this.isLoading = true;
+    this.getPlace();
+  }
+
+  ionViewWillEnter() {
+
   }
 
   onBookPlace() {
@@ -91,6 +101,14 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.placeSub.unsubscribe();
+  }
+
+  getPlace() {
+    this.placeSub = this.placesService.fetchPlace(this.placeId).subscribe(res => {
+      console.log('res is ', res);
+      this.place = res;
+      this.isLoading = false;
+    });
   }
 
 }

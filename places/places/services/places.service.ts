@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Place} from '../models/place.model';
 import {AuthService} from "../../../auth/services/auth.service";
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { take, map, tap, delay, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { urls } from '../../../../environments/environment';
@@ -60,16 +60,7 @@ export class PlacesService {
       return this._places.asObservable();
   }
 
-  getPlace(id: string) {
-    return this.places.pipe(
-        take(1),
-        map(res => {
-            return { ...res.find(c => c.id === id)};
-      })
-    );
-  }
-
-  fetchPlace() {
+  fetchPlaces() {
     return this.http.get<{[key: string]: PlaceRes}>(urls.firebase).pipe(map(resData => {
       const places = [];
       for (const key in resData) {
@@ -80,6 +71,29 @@ export class PlacesService {
       return places;
     }), tap(places => {
       this._places.next(places);
+    }));
+  }
+
+  getPlace(id: string) {
+    return this.places.pipe(
+        take(1),
+        map(res => {
+            return { ...res.find(c => c.id === id)};
+      })
+    );
+  }
+
+  fetchPlace(id) {
+    return this.http.get(`${urls.firebaseUpdate}/${id}.json`).pipe(map(placeData => {
+      return  new Place(
+        id,
+        placeData['title'],
+        placeData['description'],
+        placeData['imageUrl'],
+        placeData['price'],
+        new Date(placeData['availableFrom']),
+        new Date(placeData['availableTo']),
+        placeData['userId']);
     }));
   }
 
@@ -106,12 +120,18 @@ export class PlacesService {
     let updatedPlaces: Place[];
     return this.places.pipe(
       take(1), switchMap(places => {
+        if (!places || places.length <= 0) {
+          return this.fetchPlaces();
+        } else {
+          return of(places);
+        }
+      }), switchMap(places => {
         const updatedPlaceIndex = places.findIndex(pl => pl.id === placeId);
         updatedPlaces = [...places];
         const old = updatedPlaces[updatedPlaceIndex];
         updatedPlaces[updatedPlaceIndex] = new Place(old.id, title, description, old.imageUrl, old.price, old.availableFrom, old.availableTo, old.userId);
         return this.http.put(`${urls.firebaseUpdate}/${placeId}.json`, {...updatedPlaces[updatedPlaceIndex], id: null});
-      }), tap(()=> {
+      }) ,tap(()=> {
         this._places.next(updatedPlaces);
       }));
   }

@@ -31,7 +31,7 @@ export class DiscoverPage implements OnInit, OnDestroy {
 
   ionViewWillEnter() {
     this.isLoading = true;
-    this.placesSub = this.placesService.fetchPlace().subscribe(res => {
+    this.placesSub = this.placesService.fetchPlaces().subscribe(res => {
       this.isLoading = false;
       this.loadedPlaces = res;
       this.relevantPlaces = this.loadedPlaces;
