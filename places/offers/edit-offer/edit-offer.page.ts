@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {PlacesService} from '../../places/services/places.service';
 import {Place} from '../../places/models/place.model';
-import {LoadingController, NavController} from '@ionic/angular';
+import {AlertController, LoadingController, NavController} from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -26,7 +26,8 @@ export class EditOfferPage implements OnInit, OnDestroy {
               private router: Router,
               private placesService: PlacesService,
               private navController: NavController,
-              private loadingController: LoadingController) { }
+              private loadingController: LoadingController,
+              private alertCtrl: AlertController) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe(res => {
@@ -52,8 +53,22 @@ export class EditOfferPage implements OnInit, OnDestroy {
           })
         });
         this.isLoading = false;
+      }, err => {
+        this.isLoading = false;
+        console.log(err);
+        this.presentModal(err);
       });
     });
+  }
+
+  async presentModal(err) {
+    const alert = await this.alertCtrl.create({
+      message: err,
+      buttons: [{text: 'Okay', handler: () => {
+          this.router.navigate(['/places/offers']);
+        }}]
+    });
+    alert.present();
   }
 
   saveOffer() {
