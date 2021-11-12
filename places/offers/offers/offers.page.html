@@ -22,7 +22,7 @@
         <p *ngIf="!isLoading && offers.length === 0"></p>
         <ion-list *ngIf="!isLoading">
           <!--<ion-item-sliding  *ngFor="let offer of offers" [routerLink]="['/places/offers', offer.id]">-->
-          <ion-item-sliding  *ngFor="let offer of offers" #sliding>
+          <ion-item-sliding  *ngFor="let offer of offers" #sliding [routerLink]="['/places/offers', offer.id]">
               <offer-item [offer]="offer"></offer-item>
             <ion-item-options side="end">
               <ion-item-option color="secondary" (click)="onEdit(offer.id, sliding)">

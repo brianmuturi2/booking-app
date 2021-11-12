@@ -3,6 +3,7 @@ import {BookingService} from '../services/booking.service';
 import {Booking} from '../models/booking.model';
 import {IonItemSliding, LoadingController, ToastController} from '@ionic/angular';
 import { Subscription } from 'rxjs';
+import {AuthService} from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-bookings',
@@ -11,13 +12,17 @@ import { Subscription } from 'rxjs';
 })
 export class BookingsPage implements OnInit, OnDestroy {
 
+  isLoading = false;
   bookingsSub: Subscription;
   loadedBookings: Booking[];
   constructor(private bookingService: BookingService,
+              private authService: AuthService,
               private loadingCtrl: LoadingController) { }
 
   ngOnInit() {
-    this.bookingsSub = this.bookingService.bookings.subscribe(res => this.loadedBookings = res);
+    //this.bookingsSub = this.bookingService.bookings.subscribe(res => this.loadedBookings = res);
+    this.isLoading = true;
+    this.getBookings();
   }
 
   async cancelBooking(bookingId, slide: IonItemSliding) {
@@ -29,6 +34,26 @@ export class BookingsPage implements OnInit, OnDestroy {
     await loading.present();
     this.bookingService.cancelBooking(bookingId).subscribe( res => {
       loading.dismiss();
+    });
+  }
+
+  ionViewWillEnter() {
+    this.isLoading = true;
+    this.getBookings();
+  }
+
+  getBookings() {
+    this.bookingsSub = this.bookingService.getBookings(this.authService.userId).subscribe(res => {
+      console.log('response is ', res);
+      let myArr = [];
+      for (const x in res) {
+        if (res.hasOwnProperty(x)) {
+          console.log('key is ', res[x]);
+          myArr.push(res[x]);
+        }
+      }
+      this.loadedBookings = myArr;
+      this.isLoading = false;
     });
   }
 

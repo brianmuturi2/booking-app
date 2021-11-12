@@ -91,9 +91,10 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
       const loadCtrl = await this.loadingController.create({
         message: 'Booking place...'
       });
-      await loadCtrl.present();
-      const data = await this.bookingService.addBooking(this.place.id, this.place.title, this.place.imageUrl, dismiss.data.bookingData.firstName, dismiss.data.bookingData.lastName, dismiss.data.bookingData.guestNumber, dismiss.data.bookingData.startDate, dismiss.data.bookingData.endDate).subscribe(response => {
+      loadCtrl.present();
+      this.bookingService.addBooking(this.place.id, this.place.title, this.place.imageUrl, dismiss.data.bookingData.firstName, dismiss.data.bookingData.lastName, dismiss.data.bookingData.guestNumber, dismiss.data.bookingData.startDate, dismiss.data.bookingData.endDate).subscribe(response => {
         loadCtrl.dismiss();
+        console.log('create booking response is ', response);
       });
       this.router.navigate(['/bookings']);
     }
