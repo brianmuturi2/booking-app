@@ -26,6 +26,7 @@ export class BookingsPage implements OnInit, OnDestroy {
   }
 
   async cancelBooking(bookingId, slide: IonItemSliding) {
+    this.isLoading = false;
     slide.close();
     // cancel booking with id
     const loading = await this.loadingCtrl.create({
@@ -33,6 +34,8 @@ export class BookingsPage implements OnInit, OnDestroy {
     });
     await loading.present();
     this.bookingService.cancelBooking(bookingId).subscribe( res => {
+      this.isLoading = true;
+      this.getBookings();
       loading.dismiss();
     });
   }
