@@ -83,11 +83,10 @@ export class LocationPickerComponent implements OnInit {
     } else {
       try {
         const getLocation = await Geolocation.getCurrentPosition();
-        const coordinates: Coordinates = {
-          lat: getLocation.coords.latitude,
-          lng: getLocation.coords.longitude
-        };
-        console.log('location is ', coordinates);
+        this.latLng.lat = getLocation.coords.latitude;
+        this.latLng.lng = getLocation.coords.longitude;
+        this.getLocation();
+        this.getStaticMap();
       } catch (e) {
         const alert = await this.alertCtrl.create({
           message: e.message,
