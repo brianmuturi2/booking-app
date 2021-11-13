@@ -1,10 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import {LoadingController, ModalController } from '@ionic/angular';
+import {ActionSheetController, AlertController, LoadingController, ModalController } from '@ionic/angular';
 import {MapModalComponent} from "../../map-modal/map-modal.component";
 import {LocationPickerService} from './services/location-picker.service';
 import {map, switchMap} from 'rxjs/operators';
 import {Coordinates, PlaceLocation} from './models/location.model';
+import { Capacitor, Plugins } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
 
 @Component({
   selector: 'app-location-picker',
@@ -26,11 +28,25 @@ export class LocationPickerComponent implements OnInit {
 
   constructor(public modalCtrl: ModalController,
               private locationService: LocationPickerService,
-              private loadingCtrl: LoadingController) { }
+              private loadingCtrl: LoadingController,
+              private actionSheetCtrl: ActionSheetController,
+              private alertCtrl: AlertController) { }
 
   ngOnInit() {}
 
   async pickLocation() {
+    const actionSht = await this.actionSheetCtrl.create({
+        header: 'Please choose',
+        buttons: [
+          { text: 'Auto locate', handler: () => {this.locateUser();}},
+          { text: 'Pick on map', handler: () => {this.openMap();}},
+          { text: 'Cancel', role: 'cancel'}
+        ]
+    });
+    await actionSht.present();
+  }
+
+  private async openMap() {
     const modal = await this.modalCtrl.create({
       component: MapModalComponent
     });
@@ -47,6 +63,43 @@ export class LocationPickerComponent implements OnInit {
 
       this.getLocation();
       this.getStaticMap();
+    }
+  }
+
+  private async locateUser() {
+    if (!Geolocation) {
+      const alert = await this.alertCtrl.create({
+        message: 'Sorry, getting location automatically isnt possible. Please pick a location using the map.',
+        buttons: [
+          {
+            text: 'Okay',
+            handler: () => {
+              this.openMap();
+            }
+          }
+        ]
+      });
+      await alert.present();
+    } else {
+      try {
+        const getLocation = await Geolocation.getCurrentPosition();
+        const coordinates: Coordinates = {
+          lat: getLocation.coords.latitude,
+          lng: getLocation.coords.longitude
+        };
+        console.log('location is ', coordinates);
+      } catch (e) {
+        const alert = await this.alertCtrl.create({
+          message: e.message,
+          buttons: [
+            {
+              text: 'Okay',
+              role: 'cancel'
+            }
+          ]
+        });
+        await alert.present();
+      }
     }
   }
 
