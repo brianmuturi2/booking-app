@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import {LoadingController, ModalController } from '@ionic/angular';
 import {MapModalComponent} from "../../map-modal/map-modal.component";
 import {LocationPickerService} from './services/location-picker.service';
@@ -12,6 +12,8 @@ import {Coordinates, PlaceLocation} from './models/location.model';
   styleUrls: ['./location-picker.component.scss'],
 })
 export class LocationPickerComponent implements OnInit {
+
+  @Output() locationPick = new EventEmitter<PlaceLocation>();
 
   latLng: PlaceLocation = {
     lat: null,
@@ -72,7 +74,7 @@ export class LocationPickerComponent implements OnInit {
         console.log('image url is ', this.latLng.staticMapImageUrl);
       }
       this.isLoading = false;
+      this.locationPick.emit(this.latLng);
     });
   }
-
 }

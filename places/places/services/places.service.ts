@@ -5,6 +5,7 @@ import { BehaviorSubject, of } from 'rxjs';
 import { take, map, tap, delay, switchMap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { urls } from '../../../../environments/environment';
+import {PlaceLocation} from '../../../shared/pickers/location-picker/models/location.model';
 
 interface PlaceRes {
   availableFrom: string;
@@ -14,6 +15,7 @@ interface PlaceRes {
   price: number;
   title: string;
   userId: string;
+  location: PlaceLocation;
 }
 
 /*new Place(
@@ -65,7 +67,7 @@ export class PlacesService {
       const places = [];
       for (const key in resData) {
         if (resData.hasOwnProperty(key)) {
-          places.push(new Place(key, resData[key].title, resData[key].description, resData[key].imageUrl, resData[key].price+'', new Date(resData[key].availableFrom), new Date(resData[key].availableTo), resData[key].userId));
+          places.push(new Place(key, resData[key].title, resData[key].description, resData[key].imageUrl, resData[key].price+'', new Date(resData[key].availableFrom), new Date(resData[key].availableTo), resData[key].userId, resData[key].location));
         }
       }
       return places;
@@ -93,13 +95,14 @@ export class PlacesService {
         placeData['price'],
         new Date(placeData['availableFrom']),
         new Date(placeData['availableTo']),
-        placeData['userId']);
+        placeData['userId'],
+        placeData['location']);
     }));
   }
 
-  addPlace(title: string, description: string, price: string, availableFrom: Date, availableTo: Date) {
+  addPlace(title: string, description: string, price: string, availableFrom: Date, availableTo: Date, location: PlaceLocation) {
     let genId = '';
-    const newPlace = new Place(Math.random().toString(), title, description, 'https://static.tripzilla.com/thumb/9/0/165008_800x.jpg', price, availableFrom, availableTo, this.authService.userId);
+    const newPlace = new Place(Math.random().toString(), title, description, location.staticMapImageUrl, price, availableFrom, availableTo, this.authService.userId, location);
     let response_id = '';
     return this.http.post<{name: string}>(urls.firebase, {...newPlace, id: null}).pipe(
          switchMap(resData => {
@@ -129,7 +132,7 @@ export class PlacesService {
         const updatedPlaceIndex = places.findIndex(pl => pl.id === placeId);
         updatedPlaces = [...places];
         const old = updatedPlaces[updatedPlaceIndex];
-        updatedPlaces[updatedPlaceIndex] = new Place(old.id, title, description, old.imageUrl, old.price, old.availableFrom, old.availableTo, old.userId);
+        updatedPlaces[updatedPlaceIndex] = new Place(old.id, title, description, old.imageUrl, old.price, old.availableFrom, old.availableTo, old.userId, old.location);
         return this.http.put(`${urls.firebaseUpdate}/${placeId}.json`, {...updatedPlaces[updatedPlaceIndex], id: null});
       }) ,tap(()=> {
         this._places.next(updatedPlaces);

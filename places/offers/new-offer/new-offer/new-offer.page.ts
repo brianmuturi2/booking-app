@@ -3,6 +3,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import {PlacesService} from "../../../places/services/places.service";
+import {PlaceLocation} from '../../../../shared/pickers/location-picker/models/location.model';
 
 @Component({
   selector: 'app-new-offer',
@@ -40,13 +41,16 @@ export class NewOfferPage implements OnInit {
       dateTo: new FormControl(null, {
         updateOn: 'blur',
         validators: [Validators.required]
+      }),
+      location: new FormControl(null, {
+        validators: [Validators.required]
       })
     });
   }
 
   createOffer() {
     console.log('form is ',this.form.value);
-    this.placesService.addPlace(this.form.value.title, this.form.value.description, this.form.value.price, new Date(this.form.value.dateFrom), new Date(this.form.value.dateTo)).subscribe(res => {
+    this.placesService.addPlace(this.form.value.title, this.form.value.description, this.form.value.price, new Date(this.form.value.dateFrom), new Date(this.form.value.dateTo), this.form.value.location).subscribe(res => {
       console.log('res is ', res);
     });
 
@@ -60,6 +64,13 @@ export class NewOfferPage implements OnInit {
       this.router.navigate(['/places/offers']);
     };
     presentToast();
+  }
+
+  locationPicked(location: PlaceLocation) {
+    console.log('location data is ', location);
+    this.form.patchValue({
+      location
+    });
   }
 
 }
