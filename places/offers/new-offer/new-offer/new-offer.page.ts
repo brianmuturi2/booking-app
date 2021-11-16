@@ -37,6 +37,8 @@ export class NewOfferPage implements OnInit {
 
   newOfferForm: FormGroup;
 
+  enabled = false;
+
   constructor(private placesService: PlacesService,
               private toastController: ToastController,
               private router: Router) { }
@@ -71,6 +73,10 @@ export class NewOfferPage implements OnInit {
   }
 
   createOffer() {
+    if (this.form.invalid || !this.form.get('image').value) {
+      console.log('runing err', this.form.invalid, this.form.get('image').value);
+      return;
+    }
     console.log('form is ',this.form.value);
     this.placesService.addPlace(this.form.value.title, this.form.value.description, this.form.value.price, new Date(this.form.value.dateFrom), new Date(this.form.value.dateTo), this.form.value.location).subscribe(res => {
       console.log('res is ', res);
@@ -96,19 +102,32 @@ export class NewOfferPage implements OnInit {
   }
 
   imagePicked(e: string | File) {
+    console.log('event is ', e);
     let imageFile;
     if (typeof e === 'string') {
       try {
         // remove prefix appended to string by camera
         imageFile = base64toBlob(e.replace('data:image/jpeg;base64,', ''), 'image/jpeg');
+        console.log('running 2');
       } catch(err) {
         console.log(err);
         return;
       }
     } else {
       imageFile = e;
+      console.log('running 3');
     }
-    this.form.value.image = imageFile;
+    this.form.patchValue({
+      image: imageFile
+    });
+  }
+
+  validateForm() {
+    this.form.valueChanges.subscribe( () => {
+      if (this.form.valid && this.form.get('image')) {
+        this.enabled = false;
+      }
+    });
   }
 
 }
