@@ -5,6 +5,27 @@ import { ToastController } from '@ionic/angular';
 import {PlacesService} from "../../../places/services/places.service";
 import {PlaceLocation} from '../../../../shared/pickers/location-picker/models/location.model';
 
+function base64toBlob(base64Data, contentType) {
+  contentType = contentType || '';
+  const sliceSize = 1024;
+  const byteCharacters = atob(base64Data);
+  const bytesLength = byteCharacters.length;
+  const slicesCount = Math.ceil(bytesLength / sliceSize);
+  const byteArrays = new Array(slicesCount);
+
+  for (var sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+    const begin = sliceIndex * sliceSize;
+    const end = Math.min(begin + sliceSize, bytesLength);
+
+    const bytes = new Array(end - begin);
+    for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
+      bytes[i] = byteCharacters[offset].charCodeAt(0);
+    }
+    byteArrays[sliceIndex] = new Uint8Array(bytes);
+  }
+  return new Blob(byteArrays, { type: contentType });
+}
+
 @Component({
   selector: 'app-new-offer',
   templateUrl: './new-offer.page.html',
@@ -44,7 +65,8 @@ export class NewOfferPage implements OnInit {
       }),
       location: new FormControl(null, {
         validators: [Validators.required]
-      })
+      }),
+      image: new FormControl(null)
     });
   }
 
@@ -71,6 +93,22 @@ export class NewOfferPage implements OnInit {
     this.form.patchValue({
       location
     });
+  }
+
+  imagePicked(e: string | File) {
+    let imageFile;
+    if (typeof e === 'string') {
+      try {
+        // remove prefix appended to string by camera
+        imageFile = base64toBlob(e.replace('data:image/jpeg;base64,', ''), 'image/jpeg');
+      } catch(err) {
+        console.log(err);
+        return;
+      }
+    } else {
+      imageFile = e;
+    }
+    this.form.value.image = imageFile;
   }
 
 }
