@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import {ActionSheetController, AlertController, LoadingController, ModalController } from '@ionic/angular';
 import {MapModalComponent} from "../../map-modal/map-modal.component";
 import {LocationPickerService} from './services/location-picker.service';
@@ -13,9 +13,10 @@ import { Geolocation } from '@capacitor/geolocation';
   templateUrl: './location-picker.component.html',
   styleUrls: ['./location-picker.component.scss'],
 })
-export class LocationPickerComponent implements OnInit {
+export class LocationPickerComponent implements OnInit, OnChanges {
 
   @Output() locationPick = new EventEmitter<PlaceLocation>();
+  @Input() showPreview = false;
 
   latLng: PlaceLocation = {
     lat: null,
@@ -33,6 +34,12 @@ export class LocationPickerComponent implements OnInit {
               private alertCtrl: AlertController) { }
 
   ngOnInit() {}
+
+  ngOnChanges() {
+    if (!this.showPreview) {
+      this.latLng.staticMapImageUrl = '';
+    }
+  }
 
   async pickLocation() {
     const actionSht = await this.actionSheetCtrl.create({

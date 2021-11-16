@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild } from '@angular/core';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { AlertController, Platform } from '@ionic/angular';
 
@@ -7,10 +7,11 @@ import { AlertController, Platform } from '@ionic/angular';
   templateUrl: './image-picker.component.html',
   styleUrls: ['./image-picker.component.scss'],
 })
-export class ImagePickerComponent implements OnInit {
+export class ImagePickerComponent implements OnInit, OnChanges {
 
   @Output() imagePicker = new EventEmitter<string | File>();
   @ViewChild('filePicker') filePicker: ElementRef<HTMLInputElement>;
+  @Input() showPreview = false;
   imageFile: any;
 
   usePicker = false;
@@ -26,6 +27,12 @@ export class ImagePickerComponent implements OnInit {
     console.log('Desktop:', this.platform.is('desktop'));
     if ((!this.platform.is('mobile') && !this.platform.is('hybrid')) || this.platform.is('desktop')) {
       this.usePicker = true;
+    }
+  }
+
+  ngOnChanges() {
+    if (!this.showPreview) {
+      this.imageFile = '';
     }
   }
 

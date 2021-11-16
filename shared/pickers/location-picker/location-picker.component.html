@@ -1,6 +1,6 @@
 <div class="picker">
   <ion-spinner name="dots" *ngIf="isLoading"></ion-spinner>
   <ion-button color="primary" (click)="pickLocation()" *ngIf="!latLng.staticMapImageUrl && !isLoading"><ion-icon name="map" slot="start"></ion-icon><ion-label>Select Location</ion-label></ion-button>
-  <ion-img [src]="latLng.staticMapImageUrl" class="location-img" *ngIf="latLng.staticMapImageUrl"></ion-img>
+  <ion-img [src]="latLng.staticMapImageUrl" class="location-img" *ngIf="latLng.staticMapImageUrl && showPreview"></ion-img>
 </div>
 <ion-button color="primary" (click)="resetLocation()" *ngIf="latLng.staticMapImageUrl"><ion-label>ReSelect Location</ion-label></ion-button>
