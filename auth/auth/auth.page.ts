@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {AuthService} from '../services/auth.service';
 import {Router} from '@angular/router';
-import {LoadingController} from '@ionic/angular';
-import {NgForm} from '@angular/forms';
+import {AlertController, LoadingController} from '@ionic/angular';
+import {FormControl, FormGroup, NgForm, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-auth',
@@ -12,28 +12,28 @@ import {NgForm} from '@angular/forms';
 export class AuthPage implements OnInit {
 
   isLogin = true;
+  authForm: FormGroup;
 
   constructor(private authService: AuthService,
               private router: Router,
-              private loadingController: LoadingController) { }
+              private loadingController: LoadingController,
+              private alertController: AlertController) { }
 
   ngOnInit() {
-  }
-
-  login() {
-    this.authService.logIn();
-
-    const presentLoading = async () => {
-      const loading = await this.loadingController.create({
-        duration: 5500,
-        keyboardClose: true,
-        message: 'Login you in...',
-      });
-      await loading.present();
-      await loading.onDidDismiss();
-      this.router.navigate(['/places/discover']);
-    };
-    presentLoading();
+    this.authForm = new FormGroup({
+      name: new FormControl(null, {
+        updateOn: 'blur',
+        validators: [Validators.required]
+      }),
+      email: new FormControl(null, {
+        updateOn: 'blur',
+        validators: [Validators.required, Validators.email]
+      }),
+      password: new FormControl(null, {
+        updateOn: 'blur',
+        validators: [Validators.required, Validators.minLength(8)]
+      })
+    });
   }
 
   logout() {
@@ -42,23 +42,57 @@ export class AuthPage implements OnInit {
 
   toggleIsLogin() {
     this.isLogin = !this.isLogin;
+    this.authForm.reset();
   }
 
-  onSubmit(form: NgForm) {
-    let email = '';
-    let password = '';
-    if (!form.valid) {
-      return;
-    } else {
-      email = form.value.email;
-      password = form.value.password;
-    }
-
+  async authenticate() {
+    const loading = await this.loadingController.create({
+      keyboardClose: true,
+      message: this.isLogin ? 'Login you in...' : 'Signing you up...',
+    });
+    await loading.present();
     if (this.isLogin) {
-      // send request to login
+      this.authService.logIn({email: this.authForm.value.email, password: this.authForm.value.password}).subscribe(res => {
+        console.log('sign in response is ', res);
+        loading.dismiss();
+        this.router.navigate(['/places/discover']);
+      }, err => {
+        loading.dismiss();
+        console.log('sign in response is error', err);
+        const alert = async () => {
+          const alertModal = await this.alertController.create({
+            message: 'Sorry, we could not log you in!'
+          });
+          alertModal.present();
+        };
+        alert();
+      });
     } else {
-      // send request to sign up
+      this.authService.signUp(this.authForm.value).subscribe(res => {
+        console.log('sign up response is ', res);
+        loading.dismiss();
+        this.router.navigate(['/places/discover']);
+      }, err => {
+        loading.dismiss();
+        console.log('sign up response is error', err);
+        const alert = async () => {
+          const alertModal = await this.alertController.create({
+            message: 'Sorry, we could not sign you up!'
+          });
+          alertModal.present();
+        };
+        alert();
+      });
     }
+  }
+
+  disableSubmit() {
+    if (this.isLogin && (this.authForm.get('email').invalid || this.authForm.get('password').invalid)) {
+      return true;
+    }
+    if (!this.isLogin && this.authForm.invalid) {
+      return true;
+    } return false;
   }
 
 }
