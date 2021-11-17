@@ -100,9 +100,9 @@ export class PlacesService {
     }));
   }
 
-  addPlace(title: string, description: string, price: string, availableFrom: Date, availableTo: Date, location: PlaceLocation) {
+  addPlace(title: string, description: string, price: string, availableFrom: Date, availableTo: Date, location: PlaceLocation, imageUrl: string) {
     let genId = '';
-    const newPlace = new Place(Math.random().toString(), title, description, location.staticMapImageUrl, price, availableFrom, availableTo, this.authService.userId, location);
+    const newPlace = new Place(Math.random().toString(), title, description, imageUrl, price, availableFrom, availableTo, this.authService.userId, location);
     let response_id = '';
     return this.http.post<{name: string}>(urls.firebase, {...newPlace, id: null}).pipe(
          switchMap(resData => {
@@ -118,6 +118,12 @@ export class PlacesService {
       });*/
   }
 
+  uploadImage(image: File) {
+    const uploadData = new FormData();
+    uploadData.set('image', image);
+
+    return this.http.post<{imageUrl: string; imagePath: string}>(urls.uploadImage, uploadData);
+  }
 
   updatePlace(placeId: string, title: string, description: string) {
     let updatedPlaces: Place[];

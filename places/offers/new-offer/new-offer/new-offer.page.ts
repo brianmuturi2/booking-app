@@ -78,8 +78,11 @@ export class NewOfferPage implements OnInit {
       return;
     }
     console.log('form is ',this.form.value);
-    this.placesService.addPlace(this.form.value.title, this.form.value.description, this.form.value.price, new Date(this.form.value.dateFrom), new Date(this.form.value.dateTo), this.form.value.location).subscribe(res => {
-      console.log('res is ', res);
+    this.placesService.uploadImage(this.form.get('image').value).subscribe(res => {
+      const imageUrl = res.imageUrl;
+      this.placesService.addPlace(this.form.value.title, this.form.value.description, this.form.value.price, new Date(this.form.value.dateFrom), new Date(this.form.value.dateTo), this.form.value.location, imageUrl).subscribe(resOffer => {
+        console.log('offer res is ', resOffer);
+      });
     });
 
     const presentToast = async () => {
