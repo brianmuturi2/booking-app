@@ -4,6 +4,7 @@ import {Place} from '../../places/models/place.model';
 import {MenuController} from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import {AuthService} from "../../../auth/services/auth.service";
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-discover',
@@ -43,12 +44,13 @@ export class DiscoverPage implements OnInit, OnDestroy {
   }
 
   segmentChanged(event: CustomEvent) {
-    console.log(event);
-    if (event.detail.value === 'allPlaces') {
-      this.relevantPlaces = this.loadedPlaces;
-    } else {
-      this.relevantPlaces = this.loadedPlaces.filter(cur => cur.userId !== this.authService.userId);
-    }
+    this.authService.userId.pipe(take(1)).subscribe(res => {
+      if (event.detail.value === 'allPlaces') {
+        this.relevantPlaces = this.loadedPlaces;
+      } else {
+          this.relevantPlaces = this.loadedPlaces.filter(cur => cur.userId !== res);
+      }
+    });
   }
 
   ionViewDidEnter() {
