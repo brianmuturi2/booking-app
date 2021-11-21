@@ -41,4 +41,8 @@ export class AuthService {
   get userId() {
     return this._userId;
   }
+
+  set isAuthenticated(val) {
+    this._isAuthenticated = val;
+  }
 }

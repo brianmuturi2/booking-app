@@ -55,6 +55,7 @@ export class AuthPage implements OnInit {
       this.authService.logIn({email: this.authForm.value.email, password: this.authForm.value.password}).subscribe(res => {
         console.log('sign in response is ', res);
         loading.dismiss();
+        this.authService.isAuthenticated = true;
         this.router.navigate(['/places/discover']);
       }, err => {
         loading.dismiss();
@@ -71,6 +72,7 @@ export class AuthPage implements OnInit {
       this.authService.signUp(this.authForm.value).subscribe(res => {
         console.log('sign up response is ', res);
         loading.dismiss();
+        this.authService.isAuthenticated = true;
         this.router.navigate(['/places/discover']);
       }, err => {
         loading.dismiss();
