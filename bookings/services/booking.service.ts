@@ -51,8 +51,15 @@ export class BookingService {
     );
   }
 
-  getBookings(id) {
-    return this.http.get(`${urls.booking}?orderBy="userId"&equalTo="${id}"`).pipe(map(bookingData => {
+  getBookings() {
+    let id = '';
+    return this.authService.userId.pipe(take(1), switchMap(userId => {
+      if (!userId) {
+        throw new Error('User not found');
+      }
+      id = userId;
+      return this.http.get(`${urls.booking}?orderBy="userId"&equalTo="${id}"`);
+    }), map(bookingData => {
       const bookings = [];
       for(const key in bookingData) {
         if (bookingData.hasOwnProperty) {

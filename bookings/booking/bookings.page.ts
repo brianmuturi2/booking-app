@@ -46,7 +46,7 @@ export class BookingsPage implements OnInit, OnDestroy {
   }
 
   getBookings() {
-    this.bookingsSub = this.bookingService.getBookings(this.authService.userId).subscribe(res => {
+    this.bookingsSub = this.bookingService.getBookings().subscribe(res => {
       console.log('response is ', res);
       let myArr = [];
       for (const x in res) {
