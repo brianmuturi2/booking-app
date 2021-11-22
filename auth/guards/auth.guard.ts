@@ -8,8 +8,8 @@ import {
   UrlSegment,
   UrlTree
 } from '@angular/router';
-import { Observable } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import {switchMap, take, tap } from 'rxjs/operators';
 import {AuthService} from '../services/auth.service';
 
 @Injectable({
@@ -20,7 +20,13 @@ export class AuthGuard implements CanLoad {
               private router: Router) {
   }
   canLoad(route: Route, segments: UrlSegment[]): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.authService.isAuthenticated.pipe(take(1), tap(res => {
+    return this.authService.isAuthenticated.pipe(take(1), switchMap(isAuthenticated => {
+      if (!isAuthenticated) {
+        return this.authService.autoLogin();
+      } else {
+        return of(isAuthenticated);
+      }
+    }), tap(res => {
       if (res) {
         return true;
       } else {
