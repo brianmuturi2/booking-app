@@ -51,6 +51,7 @@ export class ImagePickerComponent implements OnInit, OnChanges {
           width: 200
         });
         this.imageFile = image.dataUrl;
+        console.log('my image is ', this.imageFile);
         this.imagePicker.emit(this.imageFile);
       } catch (e) {
         const alert = await this.alertCtrl.create({

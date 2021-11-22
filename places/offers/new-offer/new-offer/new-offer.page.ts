@@ -113,7 +113,8 @@ export class NewOfferPage implements OnInit {
     if (typeof e === 'string') {
       try {
         // remove prefix appended to string by camera
-        imageFile = base64toBlob(e.replace('data:image/jpeg;base64,', ''), 'image/jpeg');
+        const myReg = /data:image\/jpeg;base64,|data:image\/png;base64,/;
+        imageFile = base64toBlob(e.replace(myReg, ''), 'image/jpeg');
         console.log('running 2');
       } catch(err) {
         console.log(err);

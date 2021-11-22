@@ -22,7 +22,7 @@ export class BookingService {
   addBooking(placeId: string, placeTitle: string, placeImage: string, firstName: string, lastName: string, guestNumber: number, dateFrom: Date, dateTo: Date) {
     let genId = '';
     let newBooking: Booking;
-    this.authService.userId.pipe(take(1), switchMap(userId => {
+    return this.authService.userId.pipe(take(1), switchMap(userId => {
       if (!userId) {
         throw new Error('No user id found!');
       }
@@ -36,7 +36,7 @@ export class BookingService {
       tap(bookings => {
         newBooking.id = genId;
         this._bookings.next(bookings.concat(newBooking));
-    })).subscribe();
+    }));
   }
 
   cancelBooking(bookingId: string) {

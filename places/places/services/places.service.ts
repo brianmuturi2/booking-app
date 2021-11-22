@@ -102,8 +102,12 @@ export class PlacesService {
 
   addPlace(title: string, description: string, price: string, availableFrom: Date, availableTo: Date, location: PlaceLocation, imageUrl: string) {
     let genId = '';
-    this.authService.userId.pipe(take(1), switchMap(userId => {
-      const newPlace = new Place(Math.random().toString(), title, description, imageUrl, price, availableFrom, availableTo, userId, location);
+    let newPlace: Place;
+    return this.authService.userId.pipe(take(1), switchMap(userId => {
+      if (!userId) {
+        throw new Error('No user found!');
+      }
+      newPlace = new Place(Math.random().toString(), title, description, imageUrl, price, availableFrom, availableTo, userId, location);
       return this.http.post<{name: string}>(urls.firebase, {...newPlace, id: null}).pipe(
         switchMap(resData => {
           genId = resData.name;
