@@ -38,6 +38,7 @@ export class AuthService {
 
   logOut() {
     this._user.next(null);
+    Storage.remove({key: 'user'});
   }
 
   autoLogin() {
