@@ -22,12 +22,16 @@ export class BookingService {
   addBooking(placeId: string, placeTitle: string, placeImage: string, firstName: string, lastName: string, guestNumber: number, dateFrom: Date, dateTo: Date) {
     let genId = '';
     let newBooking: Booking;
-    return this.authService.userId.pipe(take(1), switchMap(userId => {
+    let userId = '';
+    return this.authService.userId.pipe(take(1), switchMap(userIdRes => {
       if (!userId) {
         throw new Error('No user id found!');
       }
+      userId = userIdRes;
+      return this.authService.token;
+    }),take(1), switchMap(token => {
       newBooking = new Booking(Math.random().toString(), placeId, userId, placeTitle, placeImage, firstName, lastName, guestNumber, dateFrom, dateTo);
-      return this.http.post<{name: string}>(`${urls.booking}`, {...newBooking, id: null});
+      return this.http.post<{name: string}>(`${urls.booking}?auth=${token}`, {...newBooking, id: null});
     }), switchMap(resData => {
         genId = resData?.name;
         return this.bookings;
@@ -40,15 +44,17 @@ export class BookingService {
   }
 
   cancelBooking(bookingId: string) {
-    return this.http.delete(`${urls.deleteBooking}/${bookingId}.json`).pipe(
-      switchMap(() => {
-        return this.bookings;
-      }),
-      take(1),
-      tap(res => {
-        this._bookings.next(res.filter(cur => cur.id !== bookingId));
-      })
+    return this.authService.token.pipe(take(1), switchMap(token => {
+      return this.http.delete(`${urls.deleteBooking}/${bookingId}.json?auth=${token}`);
+    }), switchMap(() => {
+          return this.bookings;
+        }),
+        take(1),
+        tap(res => {
+          this._bookings.next(res.filter(cur => cur.id !== bookingId));
+        })
     );
+
   }
 
   getBookings() {
@@ -58,8 +64,11 @@ export class BookingService {
         throw new Error('User not found');
       }
       id = userId;
-      return this.http.get(`${urls.booking}?orderBy="userId"&equalTo="${id}"`);
-    }), map(bookingData => {
+      return this.authService.token;
+    }),take(1), switchMap(token => {
+          return this.http.get(`${urls.booking}?orderBy="userId"&equalTo="${id}"&auth=${token}`);
+    }),
+      map(bookingData => {
       const bookings = [];
       for(const key in bookingData) {
         if (bookingData.hasOwnProperty) {

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, from } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import {keys, urls} from 'src/environments/environment';
@@ -18,9 +18,10 @@ interface AuthResData {
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements OnDestroy {
 
   private _user = new BehaviorSubject<User>(null);
+  private activeLogoutTimer: any;
 
   constructor(private httpClient: HttpClient) { }
 
@@ -37,6 +38,10 @@ export class AuthService {
   }
 
   logOut() {
+    if (this.activeLogoutTimer) {
+      clearTimeout(this.activeLogoutTimer);
+    }
+
     this._user.next(null);
     Storage.remove({key: 'user'});
   }
@@ -56,10 +61,20 @@ export class AuthService {
     }), tap (user => {
       if (user) {
         this._user.next(user);
+        this.autoLogout(user.tokenDuration);
       }
     }), map(user => {
       return !!user;
     }));
+  }
+
+  private autoLogout(duration: number) {
+    if (this.activeLogoutTimer) {
+      clearTimeout(this.activeLogoutTimer);
+    }
+     this.activeLogoutTimer = setTimeout(() => {
+      this.logOut();
+    }, duration);
   }
 
   get isAuthenticated() {
@@ -78,9 +93,19 @@ export class AuthService {
     }));
   }
 
+  get token() {
+    return this._user.asObservable().pipe(map(user => {
+      if (user) {
+        return user.token;
+      } return null;
+    }));
+  }
+
   private setUserData(userData: AuthResData) {
       const expiryTime = new Date(new Date().getTime() + (+userData.expiresIn * 1000));
-      this._user.next(new User(userData.localId, userData.email, userData.idToken, expiryTime));
+      const user = new User(userData.localId, userData.email, userData.idToken, expiryTime);
+      this._user.next(user);
+      this.autoLogout(user.tokenDuration);
       this.storeAuthData(userData.localId, userData.idToken, userData.email, expiryTime.toISOString());
   }
 
@@ -90,5 +115,11 @@ export class AuthService {
       key: 'user',
       value: val,
     });
+  }
+
+  ngOnDestroy() {
+    if (this.activeLogoutTimer) {
+      clearTimeout(this.activeLogoutTimer);
+    }
   }
 }

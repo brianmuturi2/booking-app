@@ -63,7 +63,9 @@ export class PlacesService {
   }
 
   fetchPlaces() {
-    return this.http.get<{[key: string]: PlaceRes}>(urls.firebase).pipe(map(resData => {
+    return this.authService.token.pipe(take(1), switchMap(token => {
+      return this.http.get<{[key: string]: PlaceRes}>(`${urls.firebase}?auth=${token}`);
+    }), map(resData => {
       const places = [];
       for (const key in resData) {
         if (resData.hasOwnProperty(key)) {
@@ -86,29 +88,38 @@ export class PlacesService {
   }
 
   fetchPlace(id) {
-    return this.http.get(`${urls.firebaseUpdate}/${id}.json`).pipe(map(placeData => {
-      return  new Place(
-        id,
-        placeData['title'],
-        placeData['description'],
-        placeData['imageUrl'],
-        placeData['price'],
-        new Date(placeData['availableFrom']),
-        new Date(placeData['availableTo']),
-        placeData['userId'],
-        placeData['location']);
+    return this.authService.token.pipe(take(1), switchMap(token => {
+      return this.http.get(`${urls.firebaseUpdate}/${id}.json?auth=${token}`);
+    }), map(placeData => {
+      return new Place(
+          id,
+          placeData['title'],
+          placeData['description'],
+          placeData['imageUrl'],
+          placeData['price'],
+          new Date(placeData['availableFrom']),
+          new Date(placeData['availableTo']),
+          placeData['userId'],
+          placeData['location']);
     }));
   }
 
   addPlace(title: string, description: string, price: string, availableFrom: Date, availableTo: Date, location: PlaceLocation, imageUrl: string) {
     let genId = '';
     let newPlace: Place;
-    return this.authService.userId.pipe(take(1), switchMap(userId => {
-      if (!userId) {
+    let fetchedUserId: string;
+    return this.authService.userId.pipe(take(1),
+      switchMap(userId => {
+        fetchedUserId = userId;
+        return this.authService.token;
+      }),
+      take(1),
+      switchMap(token => {
+      if (!fetchedUserId) {
         throw new Error('No user found!');
       }
-      newPlace = new Place(Math.random().toString(), title, description, imageUrl, price, availableFrom, availableTo, userId, location);
-      return this.http.post<{name: string}>(urls.firebase, {...newPlace, id: null}).pipe(
+      newPlace = new Place(Math.random().toString(), title, description, imageUrl, price, availableFrom, availableTo, fetchedUserId, location);
+      return this.http.post<{name: string}>(`${urls.firebase}?auth=${token}`, {...newPlace, id: null}).pipe(
         switchMap(resData => {
           genId = resData.name;
           return this.places;
@@ -127,13 +138,18 @@ export class PlacesService {
     const uploadData = new FormData();
     uploadData.set('image', image);
 
-    return this.http.post<{imageUrl: string; imagePath: string}>(urls.uploadImage, uploadData);
+    return this.authService.token.pipe(take(1), switchMap(token => {
+      return this.http.post<{imageUrl: string; imagePath: string}>(urls.uploadImage, uploadData, { headers: { Authorization: 'Bearer ' + token } });
+    }));
   }
 
   updatePlace(placeId: string, title: string, description: string) {
     let updatedPlaces: Place[];
-    return this.places.pipe(
-      take(1), switchMap(places => {
+    let token = '';
+    return this.authService.token.pipe(take(1), switchMap(tokenRes => {
+      token = tokenRes;
+      return this.places;
+    }), take(1), switchMap(places => {
         if (!places || places.length <= 0) {
           return this.fetchPlaces();
         } else {
@@ -144,7 +160,7 @@ export class PlacesService {
         updatedPlaces = [...places];
         const old = updatedPlaces[updatedPlaceIndex];
         updatedPlaces[updatedPlaceIndex] = new Place(old.id, title, description, old.imageUrl, old.price, old.availableFrom, old.availableTo, old.userId, old.location);
-        return this.http.put(`${urls.firebaseUpdate}/${placeId}.json`, {...updatedPlaces[updatedPlaceIndex], id: null});
+        return this.http.put(`${urls.firebaseUpdate}/${placeId}.json?auth=${token}`, {...updatedPlaces[updatedPlaceIndex], id: null});
       }) ,tap(()=> {
         this._places.next(updatedPlaces);
       }));
