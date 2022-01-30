@@ -63,6 +63,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
+    <li><a href="#features">Features</a></li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
@@ -76,7 +77,7 @@
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-Booking application that people can use to create and book events, providing the name of the event, description of the event, dates for the event, images of the location of the event and location details of the event using google maps or current location of the device.
+A booking application that people can use to create and book events, providing the name of the event, description of the event, dates for the event, images of the location of the event and location details of the event using google maps or current location of the device.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -127,6 +128,15 @@ This is an example of how to list things you need to use the software and how to
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+<!-- Features -->
+## Features
+
+The following are the features implemented in the application.
+
+* Firebase authentication
+* Firebase realtime database
+* Capacitor/ pwa elements
+* Google maps
 
 
 <!-- USAGE EXAMPLES -->
