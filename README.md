@@ -64,9 +64,6 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
@@ -117,11 +114,11 @@ This is an example of how to list things you need to use the software and how to
    ```sh
    git clone https://github.com/brianmuturi2/booking-app.git
    ```
-3. Install NPM packages
+2. Install NPM packages
    ```sh
    npm install
    ```
-4. Spin up development server
+3. Spin up development server
    ```sh
    ionic serve
    ```
@@ -145,8 +142,6 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 ## Contact
 
 Brian Muturi - iambmn254@gmail.com
-
-Project Link: [https://github.com/brianmuturi2/booking-app)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
