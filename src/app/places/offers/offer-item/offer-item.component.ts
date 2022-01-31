@@ -2,18 +2,21 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Place} from '../../places/models/place.model';
 
 @Component({
-  selector: 'offer-item',
-  templateUrl: './offer-item.component.html',
-  styleUrls: ['./offer-item.component.scss'],
+    selector: 'offer-item',
+    templateUrl: './offer-item.component.html',
+    styleUrls: ['./offer-item.component.scss'],
 })
 export class OfferItemComponent implements OnInit {
-@Input() offer: Place;
-  constructor() { }
+    @Input() offer: Place;
 
-  ngOnInit() {}
+    constructor() {
+    }
 
-  getDummyDate() {
-   return new Date();
-  }
+    ngOnInit() {
+    }
+
+    getDummyDate() {
+        return new Date();
+    }
 
 }
