@@ -1,37 +1,37 @@
 <ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button menu="m1"></ion-menu-button>
-    </ion-buttons>
-    <ion-title>bookings</ion-title>
-  </ion-toolbar>
+    <ion-toolbar>
+        <ion-buttons slot="start">
+            <ion-menu-button menu="m1"></ion-menu-button>
+        </ion-buttons>
+        <ion-title>bookings</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content *ngIf="!isLoading">
-  <ion-grid>
-    <ion-row>
-      <ion-col size-lg="8" offset-lg="2" size-md="10" offset-md="1" size-sm="12">
-        <p *ngIf="loadedBookings.length === 0">No any bookings!</p>
-        <ion-list>
-          <ion-item-sliding *ngFor="let booking of loadedBookings" #bookingSlide>
-            <ion-item>
-              <ion-avatar slot="start">
-                <ion-img [src]="booking.placeImage"></ion-img>
-              </ion-avatar>
-              <ion-label>
-                <h5>{{booking.placeTitle}}</h5>
-                <p>Guests: {{booking.guestNumber}}</p>
-                <p>Name: {{booking.firstName}} {{booking.lastName}}</p>
-              </ion-label>
-            </ion-item>
-            <ion-item-options>
-              <ion-item-option color="danger" (click)="cancelBooking(booking.id, bookingSlide)">
-                <ion-icon name="trash" slot="icon-only"></ion-icon>
-              </ion-item-option>
-            </ion-item-options>
-          </ion-item-sliding>
-        </ion-list>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+    <ion-grid>
+        <ion-row>
+            <ion-col size-lg="8" offset-lg="2" size-md="10" offset-md="1" size-sm="12">
+                <p *ngIf="loadedBookings.length === 0">No any bookings!</p>
+                <ion-list>
+                    <ion-item-sliding *ngFor="let booking of loadedBookings" #bookingSlide>
+                        <ion-item>
+                            <ion-avatar slot="start">
+                                <ion-img [src]="booking.placeImage"></ion-img>
+                            </ion-avatar>
+                            <ion-label>
+                                <h5>{{booking.placeTitle}}</h5>
+                                <p>Guests: {{booking.guestNumber}}</p>
+                                <p>Name: {{booking.firstName}} {{booking.lastName}}</p>
+                            </ion-label>
+                        </ion-item>
+                        <ion-item-options>
+                            <ion-item-option color="danger" (click)="cancelBooking(booking.id, bookingSlide)">
+                                <ion-icon name="trash" slot="icon-only"></ion-icon>
+                            </ion-item-option>
+                        </ion-item-options>
+                    </ion-item-sliding>
+                </ion-list>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>
