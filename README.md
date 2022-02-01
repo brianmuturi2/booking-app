@@ -74,7 +74,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]]
+[product-screenshot]
 
 A booking application that people can use to create and book accomodation, providing the name of the place, description of the accomodation, dates available, images of the accomodation and location details of the accomodation using google maps or current location of the device.
 
