@@ -74,7 +74,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+[![Product Name Screen Shot][product-screenshot]]
 
 A booking application that people can use to create and book accomodation, providing the name of the place, description of the accomodation, dates available, images of the accomodation and location details of the accomodation using google maps or current location of the device.
 
@@ -173,5 +173,5 @@ Brian Muturi - iambmn254@gmail.com
 [license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/brian-muturi2/
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: src/assets/ionic.png
 [maximilian]: https://www.linkedin.com/in/maximilian-schwarzmueller/?originalSubdomain=de
