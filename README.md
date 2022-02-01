@@ -29,7 +29,7 @@
 <h3 align="center">Booking App</h3>
 
   <p align="center">
-    An Ionic app where users can create and book events
+    An Ionic app where users can create and book accomodation in various places
     <br />
     <!--
     <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
