@@ -22,7 +22,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/brianmuturi2/booking-app">
+  <a href="https://booking-app-7228a.web.app/">
     <img src="src/assets/icon/favicon.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -44,7 +44,8 @@
   </p>
 </div>
 
-
+<a href="https://booking-app-7228a.web.app/" align="center"><strong>Go to App »</strong></a>
+<br />
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -134,6 +135,7 @@ The following are the features implemented in the application.
 
 * Firebase authentication
 * Firebase realtime database for crud operations
+* Firebase hosting 
 * Capacitor/ pwa elements for taking images and device location
 * Google maps for taking location
 
