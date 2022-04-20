@@ -29,7 +29,7 @@
 <h3 align="center">Booking App</h3>
 
   <p align="center">
-    An Ionic app where users can create and book events
+    An Ionic app where users can create and book accomodation in various locations.
     <br />
     <!--
     <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
@@ -75,9 +75,10 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
+
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
-A booking application that people can use to create and book events, providing the name of the event, description of the event, dates for the event, images of the location of the event and location details of the event using google maps or current location of the device.
+A booking application that people can use to create and book accomodation, providing the name of the place, description of the accomodation, dates available, images of the accomodation and location details of the accomodation using google maps or current location of the device.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -175,5 +176,5 @@ Brian Muturi - iambmn254@gmail.com
 [license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/brian-muturi2/
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: src/assets/ionic.png
 [maximilian]: https://www.linkedin.com/in/maximilian-schwarzmueller/?originalSubdomain=de
